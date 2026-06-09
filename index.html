@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Guess The Number Pro — A professional number-guessing game with leaderboards, statistics, and multiple difficulty levels." />
+  <meta name="author" content="Your Name" />
+  <meta property="og:title" content="Guess The Number Pro" />
+  <meta property="og:description" content="Can you guess the number? Challenge yourself across Easy, Medium, and Hard modes." />
+  <meta property="og:type" content="website" />
+  <title>Guess The Number Pro</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Favicon (inline SVG as data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='12' font-family='monospace' fill='white'>?</text></svg>" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark" data-theme="dark">
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" aria-live="polite" aria-label="Loading game">
+    <div class="loader-content">
+      <div class="loader-orb"></div>
+      <div class="loader-text">INITIALIZING<span class="dots">...</span></div>
+    </div>
+  </div>
+
+  <!-- Theme Toggle -->
+  <button
+    id="theme-toggle"
+    class="theme-btn"
+    aria-label="Toggle dark/light mode"
+    title="Toggle theme"
+  >
+    <span class="theme-icon">☀️</span>
+  </button>
+
+  <!-- ============ HERO SECTION ============ -->
+  <header class="hero" role="banner">
+    <div class="hero-bg-grid" aria-hidden="true"></div>
+    <div class="hero-particles" aria-hidden="true" id="hero-particles"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🎮 Portfolio Project</div>
+      <h1 class="hero-title">
+        <span class="hero-title-guess">Guess</span>
+        <span class="hero-title-the">The</span>
+        <span class="hero-title-number">Number</span>
+        <span class="hero-title-pro">Pro</span>
+      </h1>
+      <p class="hero-subtitle">
+        A skill-testing number game with leaderboards, stats tracking,<br class="desktop-br" />
+        and multiple difficulty modes. How few guesses can you make?
+      </p>
+      <div class="hero-cta-group">
+        <button class="btn btn-primary btn-lg" id="hero-play-btn" aria-label="Start playing the game">
+          <span>▶ Play Now</span>
+        </button>
+        <a href="#about" class="btn btn-ghost btn-lg" aria-label="Learn more about the project">
+          <span>Learn More ↓</span>
+        </a>
+      </div>
+      <div class="hero-stats" aria-label="Quick stats">
+        <div class="hero-stat"><span class="hero-stat-val">3</span><span class="hero-stat-label">Difficulty Modes</span></div>
+        <div class="hero-stat-divider" aria-hidden="true"></div>
+        <div class="hero-stat"><span class="hero-stat-val">∞</span><span class="hero-stat-label">Replayability</span></div>
+        <div class="hero-stat-divider" aria-hidden="true"></div>
+        <div class="hero-stat"><span class="hero-stat-val">10</span><span class="hero-stat-label">Leaderboard Spots</span></div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span>scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </header>
+
+  <!-- ============ GAME SECTION ============ -->
+  <main id="game-section" role="main">
+    <div class="game-wrapper">
+
+      <!-- Left Panel: Stats Dashboard -->
+      <aside class="panel panel-stats" aria-label="Statistics Dashboard">
+        <div class="panel-header">
+          <span class="panel-icon" aria-hidden="true">📊</span>
+          <h2 class="panel-title">Statistics</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card" aria-label="Games played">
+            <div class="stat-value" id="stat-games-played">0</div>
+            <div class="stat-label">Games Played</div>
+          </div>
+          <div class="stat-card" aria-label="Games won">
+            <div class="stat-value" id="stat-games-won">0</div>
+            <div class="stat-label">Games Won</div>
+          </div>
+          <div class="stat-card stat-card-wide" aria-label="Win rate percentage">
+            <div class="stat-value" id="stat-win-rate">0%</div>
+            <div class="stat-label">Win Rate</div>
+          </div>
+          <div class="stat-card" aria-label="Average attempts">
+            <div class="stat-value" id="stat-avg-attempts">—</div>
+            <div class="stat-label">Avg. Attempts</div>
+          </div>
+          <div class="stat-card" aria-label="Highest score">
+            <div class="stat-value highlight" id="stat-best-score">0</div>
+            <div class="stat-label">Best Score</div>
+          </div>
+          <div class="stat-card stat-card-wide" aria-label="Current difficulty">
+            <div class="stat-value difficulty-badge" id="stat-difficulty">Easy</div>
+            <div class="stat-label">Difficulty</div>
+          </div>
+        </div>
+        <button class="btn btn-danger btn-sm" id="reset-stats-btn" aria-label="Reset all statistics">
+          🗑 Reset Stats
+        </button>
+      </aside>
+
+      <!-- Center: Game Card -->
+      <section class="game-card" aria-label="Game area">
+        <!-- Name Entry Screen -->
+        <div id="name-screen" class="game-screen active" aria-live="polite">
+          <div class="screen-inner">
+            <div class="welcome-icon" aria-hidden="true">🎯</div>
+            <h2 class="screen-title">Welcome, Player</h2>
+            <p class="screen-sub">Enter your name to track your scores on the leaderboard.</p>
+            <div class="input-group">
+              <label for="player-name-input" class="input-label">Your Name</label>
+              <input
+                type="text"
+                id="player-name-input"
+                class="text-input"
+                placeholder="e.g. Alex"
+                maxlength="20"
+                autocomplete="off"
+                aria-required="true"
+                aria-describedby="name-hint"
+              />
+              <span id="name-hint" class="input-hint">2–20 characters, letters only</span>
+            </div>
+            <div class="difficulty-selector" role="radiogroup" aria-label="Select difficulty level">
+              <p class="selector-label">Choose Difficulty</p>
+              <div class="difficulty-options">
+                <label class="diff-option" aria-label="Easy mode, numbers 1 to 50">
+                  <input type="radio" name="difficulty" value="easy" checked />
+                  <span class="diff-btn">
+                    <span class="diff-emoji">🟢</span>
+                    <span class="diff-name">Easy</span>
+                    <span class="diff-range">1–50</span>
+                  </span>
+                </label>
+                <label class="diff-option" aria-label="Medium mode, numbers 1 to 100">
+                  <input type="radio" name="difficulty" value="medium" />
+                  <span class="diff-btn">
+                    <span class="diff-emoji">🟡</span>
+                    <span class="diff-name">Medium</span>
+                    <span class="diff-range">1–100</span>
+                  </span>
+                </label>
+                <label class="diff-option" aria-label="Hard mode, numbers 1 to 500">
+                  <input type="radio" name="difficulty" value="hard" />
+                  <span class="diff-btn">
+                    <span class="diff-emoji">🔴</span>
+                    <span class="diff-name">Hard</span>
+                    <span class="diff-range">1–500</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full" id="start-game-btn" aria-label="Start the game">
+              Start Game →
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Game Screen -->
+        <div id="game-screen" class="game-screen" aria-live="polite" aria-atomic="false">
+          <div class="screen-inner">
+            <div class="game-header">
+              <div class="player-badge" id="player-badge" aria-label="Current player">
+                <span class="badge-avatar" aria-hidden="true">👤</span>
+                <span class="badge-name" id="badge-name-display">Player</span>
+              </div>
+              <div class="game-meta">
+                <span class="meta-item" aria-label="Current difficulty">
+                  <span class="meta-label">Mode</span>
+                  <span class="meta-value" id="game-difficulty-label">Easy</span>
+                </span>
+                <span class="meta-item" aria-label="Number range">
+                  <span class="meta-label">Range</span>
+                  <span class="meta-value" id="game-range-label">1–50</span>
+                </span>
+                <span class="meta-item" aria-label="Attempts made">
+                  <span class="meta-label">Tries</span>
+                  <span class="meta-value" id="attempts-display">0</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="number-display-area" aria-label="Number display and feedback">
+              <div class="number-target" aria-hidden="true">
+                <div class="number-orb" id="number-orb">?</div>
+                <div class="number-orb-ring" aria-hidden="true"></div>
+              </div>
+              <div
+                class="hint-display"
+                id="hint-display"
+                aria-live="assertive"
+                aria-atomic="true"
+                role="status"
+              >
+                Make your first guess!
+              </div>
+            </div>
+
+            <div class="guess-area">
+              <div class="input-row">
+                <input
+                  type="number"
+                  id="guess-input"
+                  class="guess-input"
+                  placeholder="Enter guess..."
+                  min="1"
+                  aria-label="Your guess"
+                  aria-describedby="hint-display"
+                  autocomplete="off"
+                />
+                <button
+                  class="btn btn-primary btn-guess"
+                  id="submit-guess-btn"
+                  aria-label="Submit your guess"
+                >
+                  Guess
+                </button>
+              </div>
+              <div class="guess-history" id="guess-history" aria-label="Previous guesses" aria-live="polite"></div>
+            </div>
+
+            <div class="game-score-row">
+              <span class="score-label">Current Score</span>
+              <span class="score-value" id="current-score">1000</span>
+            </div>
+
+            <button class="btn btn-ghost btn-sm" id="new-game-btn" aria-label="Start a new game">
+              ↺ New Game
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Leaderboard -->
+      <aside class="panel panel-leaderboard" aria-label="Leaderboard">
+        <div class="panel-header">
+          <span class="panel-icon" aria-hidden="true">🏆</span>
+          <h2 class="panel-title">Leaderboard</h2>
+        </div>
+        <div class="leaderboard-difficulty-tabs" role="tablist" aria-label="Filter leaderboard by difficulty">
+          <button class="lb-tab active" data-diff="all" role="tab" aria-selected="true">All</button>
+          <button class="lb-tab" data-diff="easy" role="tab" aria-selected="false">Easy</button>
+          <button class="lb-tab" data-diff="medium" role="tab" aria-selected="false">Medium</button>
+          <button class="lb-tab" data-diff="hard" role="tab" aria-selected="false">Hard</button>
+        </div>
+        <div class="leaderboard-list" id="leaderboard-list" role="list" aria-label="Top 10 scores">
+          <div class="lb-empty">No scores yet.<br/>Be the first! 🎯</div>
+        </div>
+        <button class="btn btn-danger btn-sm" id="clear-leaderboard-btn" aria-label="Clear leaderboard">
+          🗑 Clear Board
+        </button>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ============ ABOUT SECTION ============ -->
+  <section id="about" class="about-section" aria-labelledby="about-heading">
+    <div class="container">
+      <div class="section-eyebrow">About This Project</div>
+      <h2 id="about-heading" class="section-title">More Than a Guessing Game</h2>
+      <p class="section-body">
+        Guess The Number Pro is a showcase of modern, framework-free frontend development.
+        Built with pure HTML5, CSS3, and Vanilla JavaScript, every interaction — from the
+        glassmorphic UI to the confetti celebration — is handcrafted without libraries.
+        It demonstrates persistent state management via <code>localStorage</code>, modular
+        JavaScript architecture, and responsive, accessible design that works on every device.
+      </p>
+      <div class="tech-chips" aria-label="Technologies used">
+        <span class="tech-chip">HTML5</span>
+        <span class="tech-chip">CSS3</span>
+        <span class="tech-chip">Vanilla JS</span>
+        <span class="tech-chip">localStorage</span>
+        <span class="tech-chip">CSS Animations</span>
+        <span class="tech-chip">ARIA Accessibility</span>
+        <span class="tech-chip">Responsive Design</span>
+        <span class="tech-chip">Glassmorphism</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES SECTION ============ -->
+  <section id="features" class="features-section" aria-labelledby="features-heading">
+    <div class="container">
+      <div class="section-eyebrow">What's Inside</div>
+      <h2 id="features-heading" class="section-title">Built to Impress</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">🎯</div>
+          <h3 class="feature-title">Smart Difficulty</h3>
+          <p class="feature-desc">Three calibrated modes — Easy (1–50), Medium (1–100), Hard (1–500) — each with its own scoring multiplier.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">🏆</div>
+          <h3 class="feature-title">Leaderboard</h3>
+          <p class="feature-desc">Persistent top-10 rankings per difficulty, stored locally. Named entries, automatic sorting, filterable tabs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">📊</div>
+          <h3 class="feature-title">Stats Dashboard</h3>
+          <p class="feature-desc">Tracks win rate, average attempts, best score, and games played — all persisted across sessions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">🎉</div>
+          <h3 class="feature-title">Win Celebration</h3>
+          <p class="feature-desc">A canvas-based confetti burst and animated victory modal every time you crack the code.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">🌙</div>
+          <h3 class="feature-title">Dark / Light Mode</h3>
+          <p class="feature-desc">Full theme system with smooth CSS transitions. Preference saved in localStorage automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">♿</div>
+          <h3 class="feature-title">Accessible by Design</h3>
+          <p class="feature-desc">Full keyboard navigation, ARIA labels throughout, visible focus indicators, and WCAG-compliant contrast.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo" aria-hidden="true">🎮</span>
+        <span class="footer-name">Guess The Number Pro</span>
+      </div>
+      <p class="footer-credit">
+        Designed &amp; built by <strong>Your Name</strong> · 2024 ·
+        <a href="https://github.com/yourusername/guess-the-number-pro" target="_blank" rel="noopener noreferrer" aria-label="View source code on GitHub">GitHub ↗</a>
+      </p>
+      <p class="footer-note">Pure HTML · CSS · Vanilla JavaScript · No frameworks.</p>
+    </div>
+  </footer>
+
+  <!-- ============ WIN MODAL ============ -->
+  <div
+    id="win-modal"
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="win-modal-title"
+    aria-describedby="win-modal-desc"
+    hidden
+  >
+    <div class="modal-card">
+      <div class="modal-confetti-area" id="confetti-canvas-container" aria-hidden="true">
+        <canvas id="confetti-canvas"></canvas>
+      </div>
+      <div class="modal-content">
+        <div class="win-emoji" aria-hidden="true">🎉</div>
+        <h2 id="win-modal-title" class="modal-title">You Cracked It!</h2>
+        <p id="win-modal-desc" class="modal-subtitle">Outstanding deduction!</p>
+        <div class="win-stats">
+          <div class="win-stat">
+            <span class="win-stat-label">The Number</span>
+            <span class="win-stat-val" id="win-number">—</span>
+          </div>
+          <div class="win-stat">
+            <span class="win-stat-label">Attempts</span>
+            <span class="win-stat-val" id="win-attempts">—</span>
+          </div>
+          <div class="win-stat">
+            <span class="win-stat-label">Score</span>
+            <span class="win-stat-val highlight" id="win-score">—</span>
+          </div>
+        </div>
+        <div class="win-rank" id="win-rank-display" aria-live="polite"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="modal-play-again-btn" aria-label="Play another round">
+            ▶ Play Again
+          </button>
+          <button class="btn btn-ghost" id="modal-close-btn" aria-label="Close victory screen">
+            View Stats
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONFIRM MODAL (for resets) ============ -->
+  <div
+    id="confirm-modal"
+    class="modal-overlay"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="confirm-title"
+    aria-describedby="confirm-desc"
+    hidden
+  >
+    <div class="modal-card modal-card-sm">
+      <div class="modal-content">
+        <div class="win-emoji" aria-hidden="true">⚠️</div>
+        <h2 id="confirm-title" class="modal-title">Are you sure?</h2>
+        <p id="confirm-desc" class="modal-subtitle">This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="btn btn-danger" id="confirm-yes-btn">Yes, Reset</button>
+          <button class="btn btn-ghost" id="confirm-no-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
